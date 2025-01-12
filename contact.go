@@ -27,7 +27,7 @@ func parseGooglePersonToContact(c *people.Person) contact {
 
 	var birthday string
 	if len(c.Birthdays) > 0 {
-		birthday = fmt.Sprintf("%02d-%02d-%02d", c.Birthdays[0].Date.Year, c.Birthdays[0].Date.Month, c.Birthdays[0].Date.Day)
+		birthday = fmt.Sprintf("%02d/%02d/%04d", c.Birthdays[0].Date.Month, c.Birthdays[0].Date.Day, c.Birthdays[0].Date.Year)
 	}
 	org := ""
 	if len(c.Organizations) > 0 {
@@ -73,7 +73,7 @@ func updateContactStruct(contact *contact, colName string, val string) error {
 		contact.name = val
 		contact._person.Names[0].DisplayName = val
 	case "Birthday":
-		myDate, err := time.Parse("2006-01-02", val)
+		myDate, err := time.Parse("01/02/2006", val)
 		if err != nil {
 			return err
 		}
@@ -117,6 +117,12 @@ func updateContactStruct(contact *contact, colName string, val string) error {
 			})
 		}
 	case "Last Contact Date":
+		// Google stores this as a string so we just need to validate that it is a
+		// valid date string but don't need to store the Time object
+		_, err := time.Parse("2006-01-02", val)
+		if err != nil {
+			return err
+		}
 		contact.lastContactDate = val
 
 		foundMatch := false

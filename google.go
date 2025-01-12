@@ -101,8 +101,8 @@ func loadData(srv *people.Service) []contact {
 		connection := response.Connections[i]
 		c := parseGooglePersonToContact(connection)
 
-		// Only add it if it isn't empty
-		if c != (contact{}) {
+		// Only add it if it isn't empty and isn't ignored
+		if c != (contact{}) && c.tier != 9 {
 			output = append(output, c)
 		}
 	}
